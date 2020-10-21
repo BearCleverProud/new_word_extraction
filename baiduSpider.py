@@ -6,6 +6,7 @@ import time, re
 from openpyxl import load_workbook,Workbook
 import configparser
 import os
+import pickle
 
 def get_conf(conf_name):
     '''
@@ -20,7 +21,7 @@ def get_conf(conf_name):
     conf_info = conf.get('myconf', conf_name)
     return conf_info
 
-def get_web_info(driver):
+def get_web_info(driver, index=0):
     '''
     爬去页面信息，并实现下一页跳转。当无跳转按钮时结束。
     :param driver: 浏览器实体
@@ -45,27 +46,30 @@ def get_web_info(driver):
             # journal_title = driver.find_element_by_class_name('journal_title').text
             key_word = driver.find_element_by_class_name('kw_main').text
             # author = driver.find_element_by_class_name('author_text').text
-            abstract = driver.find_element_by_class_name('abstract_wr').text
+            abstract = driver.find_element_by_class_name('abstract_wr').text.split("\n")[1]
             # print(paper_title, journal_title, key_word, author)
-            web_info.append([paper_title, key_word, abstract])
-            time.sleep(1)
+            web_info.append({"title": paper_title, "keyword": key_word, "abstract": abstract})
+            time.sleep(2)
             driver.close()
         except:
             print('详情页错误', driver.current_url)
             driver.close()
         driver.switch_to.window(base_page)
     # 查看是否有下一页
+    
     try:
-        next_page = init_driver.find_elements_by_id("page")
-        next_page[-1].find_element_by_tag_name('a').click()
+        next_page = driver.find_elements_by_id("page")[0]
+        next_page.find_elements_by_tag_name('a')[-1].click()
         print('next page')
         time.sleep(1)
     except:
         print('finish!!!')
         driver.close()
         return web_info
-    web_info += get_web_info(driver)
-    # driver.close()
+    if index % 10 == 0:
+        pickle.dump(web_info, open("crawled_data" + str(index) + ".pkl", "wb"))
+    web_info += get_web_info(driver, index+1)
+    driver.close()
     return web_info
 
 def get_name_list(file_loc):
@@ -88,8 +92,8 @@ file_loc = get_conf('file_loc')
 name_list = get_name_list(file_loc)
 # url = get_conf('url')
 # print(url)
-wb = Workbook()
-sheet = wb.active
+# wb = Workbook()
+# sheet = wb.active
 for j in range(len(name_list[0])):
     init_driver = webdriver.Chrome()
     name = name_list[0][j]
@@ -100,10 +104,9 @@ for j in range(len(name_list[0])):
     while init_driver.find_elements_by_class_name('c_font') == []:
         print(name, '页面空白刷新')
         init_driver.get(url)
-    info = get_web_info(init_driver)
-        # print(info)
-    sheet.title = "Sheet1"
-    for i in info:
-        i += [name]
-        sheet.append(i)
-wb.save(r'paper_list.xlsx')
+    get_web_info(init_driver)
+    # sheet.title = "Sheet1"
+    # for i in info:
+    #     i += [name]
+    #     sheet.append(i)
+# wb.save(r'paper_list.xlsx')
