@@ -10,7 +10,6 @@ Python 3.x
 '''
 import requests;
 import time;
-import threading;
 import urllib3;
 
 from selenium import webdriver
@@ -171,7 +170,7 @@ if __name__ == '__main__':
     # 获取IP的API接口
     apiUrl = "http://api.goubanjia.com/dynamic/get/ebb758478262d6dc0a2613f67b713998.html?sep=3";
     # 要抓取的目标网站地址
-    targetUrl = "http://pv.sohu.com/cityjson?ie=utf-8";
+    # targetUrl = "http://pv.sohu.com/cityjson?ie=utf-8";
     # 获取IP时间间隔，建议为5秒
     fetchSecond = 5;
     # 开始自动获取IP
