@@ -26,17 +26,17 @@ You can construct your own `queries.xlsx` to crawl specific website you would li
 
 
 
-You can construct this with `openpyxl` automatically by 
+You can construct this with `openpyxl` automatically by
 
-`from openpyxl import load_workbook,Workbook`
+​	from openpyxl import load_workbook,Workbook
 
-`wb = Workbook()
-sheet = wb.active
-sheet.title = "Sheet1"`
+​	wb = Workbook()
+​	sheet = wb.active
+​	sheet.title = "Sheet1"
 
-`a = ["computer architecture", "https://xueshu.baidu.com/s?wd=computer+architecture&rsv_bp=0&tn=SE_baiduxueshu_c1gjeupa&rsv_spt=3&ie=utf-8&f=3&rsv_sug2=0&sc_f_para=sc_tasktype%3D%7BfirstSimpleSearch%7D&rsv_n=1&rsp=0"]`
+​	a = ["computer architecture", "https://xueshu.baidu.com/s?wd=computer+architecture&rsv_bp=0&tn=SE_baiduxueshu_c1gjeupa&rsv_spt=3&ie=utf-8&f=3&rsv_sug2=0&sc_f_para=sc_tasktype%3D%7BfirstSimpleSearch%7D&rsv_n=1&rsp=0"]
 
-`wb.save(r'queries.xlsx')`
+​	wb.save(r'queries.xlsx')```
 
 Please note that there should not be any blank rows. The URLs could be set with a filter by copying the URLs from your browser.
 
