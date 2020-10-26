@@ -8,7 +8,7 @@ def get_list(find):
     subject = "I138"
     r = requests.post(url="https://search.cnki.com.cn/api/FileterResultApi/ArticleFileter?searchType=MulityTermsSearch&ArticleType=&ReSearch=&ParamIsNullOrEmpty=true&Islegal=false&Content="
                           + find + "&Theme=&Title=&KeyWd=&Author=&SearchFund=&Originate=&Summary=&PublishTimeBegin=&PublishTimeEnd=&MapNumber=&Name=&Issn=&Cn=&Unit=&Public=&Boss=&FirstBoss=&Catalog=&Reference=&Speciality=&Type=&Subject="
-                          + subject + "&SpecialityCode=&UnitCode=&Year=&AuthorFilter=&BossCode=&Fund=&Level=&Elite=&Organization=&Order=&Page=&PageIndex=&ExcludeField=Year&ZtCode=&Smarts=")
+                          + subject + "&SpecialityCode=&UnitCode=&Year=&AuthorFilter=&BossCode=&Fund=&Level=&Elite=&Organization=&Order=&Page=&PageIndex=&ExcludeField=Year&ZtCode=&Smarts=", verify=False)
     #print(r.json())
     initialyear = r.json()[0].get('FilterName')
     if int(initialyear) >= 2019:

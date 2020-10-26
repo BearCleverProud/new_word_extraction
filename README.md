@@ -3,7 +3,7 @@
 This repo will consist of three parts:
 
 1. Codes for crawling papers' abstract, keyword, authors, titles from [Baidu Academic](https://xueshu.baidu.com) using a user defined query, forked from [this website](https://github.com/eveningqn/baiduSpider) with some modifications
-2. Codes to extract new words from all the information we got from last step(To be done)
+2. Codes to extract new words from all the information we got from last step(Need Tuning)
 3. Dialog bot to explain the new words(To be done)
 
 
@@ -17,6 +17,8 @@ Requirements:
 `urllib3 == 1.24.3`
 
 `openpyxl == 3.0.5`
+
+`smoothNLP ==0.4.0`
 
 and also a chrome web driver will be needed
 
@@ -48,3 +50,5 @@ Please note that there should not be any blank rows. The URLs could be set with 
 Usage:
 
 To crawl [Baidu Academic](https://xueshu.baidu.com), Run `python3 baidySpider.py`
+
+To extract new words from the data, run `python3 extract_new_words.py`. You will need to prepare a word list to filter out some of the words are not newly invented, of course, you are free to delete the filtering procedure.
