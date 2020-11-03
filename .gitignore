@@ -2,3 +2,6 @@ ccfpedia_term.json
 queries.xlsx
 data/
 extract_new_words/all_words.pkl
+extract_new_words/words.txt
+__pycache__
+baidu.json
