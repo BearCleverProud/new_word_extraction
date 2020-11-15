@@ -21,6 +21,15 @@ print(result)
 print("Original new word count: " + str(len(result)))
 print("Words from keywords: " + str(len(keywords)))
 all_words = set(pickle.load(open("all_words.pkl", "rb")))
+
+with open("words1.txt", "r") as f:
+	for line in f:
+		all_words.add(line.strip())
+
+with open("words2.txt", 'r') as f:
+	for line in f:
+		all_words.add(line.strip())
+
 filtered_words = []
 for each in result:
 	if each not in all_words:
@@ -31,7 +40,7 @@ for each in keywords:
 		keywords_filtered.append(each)
 print("Filtered new word count: " + str(len(filtered_words)))
 print("Filtered from keywords: " + str(len(keywords_filtered)))
-with open("words.txt", "w") as f:
+with open("words3.txt", "w") as f:
 	for each in filtered_words + keywords_filtered:
 		f.write(each + "\n")
 # print(filtered_words)

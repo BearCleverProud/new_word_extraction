@@ -4,5 +4,11 @@ data/
 extract_new_words/all_words.pkl
 extract_new_words/words.txt
 extract_new_words/word_reliable.txt
+extract_new_words/words1.txt
+extract_new_words/words2.txt
+extract_new_words/didnt_find.txt
+extract_new_words/found_words.txt
+extract_new_words/words3.txt
+extract_new_words/wiki.json
 __pycache__
 baidu.json

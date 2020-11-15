@@ -41,12 +41,15 @@ def get_content(driver):
 
 def get_web_info(driver):
 	title = driver.find_element_by_class_name('lemmaWgt-lemmaTitle-title').find_element_by_tag_name("h1").text
-	summary = driver.find_element_by_class_name('lemma-summary').find_elements_by_class_name("para")
-	summary = "".join([each.text for each in summary])
-	infobox = get_infobox(driver)
-	# subtitles = get_subtitles(driver)
-	# content = get_content(driver)
-	return {"abs": summary, "name": title, "infobox": infobox}
+	try:
+		summary = driver.find_element_by_class_name('lemma-summary').find_elements_by_class_name("para")
+		summary = "".join([each.text for each in summary])
+		infobox = get_infobox(driver)
+		# subtitles = get_subtitles(driver)
+		# content = get_content(driver)
+		return {"abs": summary, "name": title, "infobox": infobox}
+	except:
+		return {"name": title}
 
 
 if __name__ == "__main__":
