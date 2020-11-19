@@ -1,10 +1,11 @@
 ## New Word Extraction
 
-This repo will consist of three parts:
+This repo will consist of four parts:
 
-1. Codes for crawling papers' abstract, keyword, authors, titles from [Baidu Academic](https://xueshu.baidu.com) using a user defined query, forked from [this website](https://github.com/eveningqn/baiduSpider) with some modifications
-2. Codes to extract new words from all the information we got from last step(Need Tuning)
-3. Dialog bot to explain the new words(To be done)
+1. Codes for crawling papers' abstract, keyword, authors, titles from [Baidu Academic](https://xueshu.baidu.com) and [cnki](https://www.cnki.com.cn) using a user defined query, forked from [this website](https://github.com/eveningqn/baiduSpider) with some modifications
+2. Codes to extract new words from all the information we got from last step
+3. Crawl the explainations from [Wikipedia](https://www.wikipedia.org) and [BaiduBaike](https://baike.baidu.com)
+4. Dialog bot to explain the new words
 
 
 
@@ -27,11 +28,7 @@ You can install it through `pip install -r requirement.txt`, and also a chrome w
 
 
 
-You can construct your own `queries.xlsx` to crawl specific website you would like to, just follow the format below:
-
-
-
-You can construct this with `openpyxl` automatically by just construct a list 
+You can construct your own `queries.xlsx` to crawl the specific websites you would like to, just follow the format below, of course you can construct this with `openpyxl` automatically by the code snippet, and replace the `terms` as you wish
 
 ```python3
 from openpyxl import load_workbook,Workbook
@@ -52,13 +49,15 @@ Please note that there should not be any blank rows. The URLs could be set with 
 
 Usage:
 
-**Paper Crawling Process**
+**Paper Crawling**
 
 To crawl papers from [Baidu Academic](https://xueshu.baidu.com), run `python3 baidySpider.py`
 
+To crawl papers from [cnki](https://www.cnki.com.cn), run `python3 word.py`
+
 **Extract New Words from Crawled Paper**
 
-To extract new words from the data, run `python3 extract_new_words.py`. You will need to prepare a word list to filter out some of the words are not newly invented, of course, you are free to delete the filtering procedure.
+To extract new words from the data, run `python3 extract_new_words.py`. You will need to prepare a word list to filter out some of the words are not newly invented, and certainly you are free to delete the filtering procedure.
 
 **Crawl Explainations from Wikipedia and BaiduBaike**
 
@@ -70,9 +69,9 @@ To crawl [BaiduBaike](https://baike.baidu.com) using the keywords from above pro
 
 You should install and run `elasticsearch` before run the `python` script.
 
-For MaxOS users, we recommend them to use `brew install elasticsearch`, and then type in `elasticsearch` in your command line, then this service will be deployed in your local machine. 
+For MaxOS users, we recommend them to use `brew install elasticsearch`, and then type `elasticsearch` in your command line, then this service will be deployed in your local machine. 
 
-First time run: You want to run `python dialog_bot.py --json_file [yourfile]` to create the model file, which takes a while. The model is the BERT representation of all the keywords. The format of Json file could be found in the file `crawlbaidupedia.py` at `line 51-55`
+First time run: You want to run `python dialog_bot.py --json_file [yourfile]` to create the model file, which takes a while. The model is the BERT representation of all the keywords. The format of `json` file could be found in the file `crawlbaidupedia.py` at `line 51-55`
 
 Then: You will just run by `python dialog_bot.py --model_file [your model]` to interactively chat with the chatbot.
 
