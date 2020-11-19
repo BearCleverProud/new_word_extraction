@@ -11,5 +11,8 @@ extract_new_words/found_words.txt
 extract_new_words/words3.txt
 extract_new_words/wiki.json
 chatbot/baidu.json
+chatbot/stopwords/
+chatbot/name_embeddings.pt
+extract_new_words/word_reliable2.txt
 __pycache__
 baidu.json

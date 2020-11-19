@@ -44,10 +44,13 @@ def get_web_info(driver):
 	try:
 		summary = driver.find_element_by_class_name('lemma-summary').find_elements_by_class_name("para")
 		summary = "".join([each.text for each in summary])
-		infobox = get_infobox(driver)
-		# subtitles = get_subtitles(driver)
-		# content = get_content(driver)
-		return {"abs": summary, "name": title, "infobox": infobox}
+		try:
+			infobox = get_infobox(driver)
+			# subtitles = get_subtitles(driver)
+			# content = get_content(driver)
+			return {"abs": summary, "name": title, "infobox": infobox}
+		except:
+			return {"abs": summary, "name": title}
 	except:
 		return {"name": title}
 
@@ -58,11 +61,11 @@ if __name__ == "__main__":
 	found = []
 	driver = webdriver.Chrome()
 
-	with open("word_reliable.txt", "r") as f:
+	with open("word_reliable2.txt", "r") as f:
 		for line in f:
 			words.append(line.strip())
 
-	with open("baidu.json", "w", encoding="utf-8") as f:
+	with open("baidu.json", "a", encoding="utf-8") as f:
 
 		for each in words:
 			url = "https://baike.baidu.com/item/" + each

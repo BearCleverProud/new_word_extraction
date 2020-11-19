@@ -12,15 +12,18 @@ There should be a `data/` folder where the crawled files will be stored in `.pkl
 
 Requirements:
 
-`selenium == 3.141.0`
+```
+selenium == 3.141.0
+urllib3 == 1.24.3
+openpyxl == 3.0.5
+smoothNLP ==0.4.0
+ltp == 4.0.10
+torch == 1.6.0
+elasticsearch == 7.10.0
+transformers == 3.3.1
+```
 
-`urllib3 == 1.24.3`
-
-`openpyxl == 3.0.5`
-
-`smoothNLP ==0.4.0`
-
-and also a chrome web driver will be needed
+You can install it through `pip install -r requirement.txt`, and also a chrome web driver will be needed
 
 
 
@@ -49,6 +52,29 @@ Please note that there should not be any blank rows. The URLs could be set with 
 
 Usage:
 
-To crawl [Baidu Academic](https://xueshu.baidu.com), Run `python3 baidySpider.py`
+**Paper Crawling Process**
+
+To crawl papers from [Baidu Academic](https://xueshu.baidu.com), run `python3 baidySpider.py`
+
+**Extract New Words from Crawled Paper**
 
 To extract new words from the data, run `python3 extract_new_words.py`. You will need to prepare a word list to filter out some of the words are not newly invented, of course, you are free to delete the filtering procedure.
+
+**Crawl Explainations from Wikipedia and BaiduBaike**
+
+To crawl [Wikipedia](https://www.wikipedia.org) using the keywords from above procedures, run`python3 crawlwikipedia.py`
+
+To crawl [BaiduBaike](https://baike.baidu.com) using the keywords from above procedures, run`python3 crawlbaidupedia.py`
+
+**Run Dialogue Bot**
+
+You should install and run `elasticsearch` before run the `python` script.
+
+For MaxOS users, we recommend them to use `brew install elasticsearch`, and then type in `elasticsearch` in your command line, then this service will be deployed in your local machine. 
+
+First time run: You want to run `python dialog_bot.py --json_file [yourfile]` to create the model file, which takes a while. The model is the BERT representation of all the keywords. The format of Json file could be found in the file `crawlbaidupedia.py` at `line 51-55`
+
+Then: You will just run by `python dialog_bot.py --model_file [your model]` to interactively chat with the chatbot.
+
+Enjoy chatting!
+
