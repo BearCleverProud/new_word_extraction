@@ -4,9 +4,9 @@ import argparse
 import json
 import sys
 from ltp import LTP
-from elasticsearch import Elasticsearch
+# from elasticsearch import Elasticsearch
 
-es = Elasticsearch()
+# es = Elasticsearch()
 ltp = LTP()
 tokenizer = AutoTokenizer.from_pretrained("bert-base-chinese")  
 model = AutoModel.from_pretrained("bert-base-chinese")
@@ -38,7 +38,7 @@ class ChatBot:
 
 		if r:
 			s += "\n"
-			s += "你说的是" + r['name'] + "吗？"
+			s += "你说的是" + r['name'] + "吗？\n"
 			if 'abs' in r:
 				s += r["abs"]
 			if "infobox" in r:
@@ -47,20 +47,12 @@ class ChatBot:
 			return s
 
 		else:
-			result = esearch(tok)
 			tmp = tokenizer(tok)
 			sent_embed = model(torch.tensor(tmp['input_ids']).unsqueeze(0), \
 				torch.tensor(tmp['attention_mask']).unsqueeze(0))[0].squeeze(0).max(dim=0)[0]
 			sim = torch.tensor([cos_sim(each, sent_embed) for each in self.name_embeddings])
-			best_match = torch.argsort(sim, descending=True)[:2]
-			best_match_name = [self.faq[each]['name'].lower() for each in best_match]
-			not_found = True
-			for idx, each in enumerate(best_match_name):
-				if each in result:
-					not_found = False
-					return return_s(best_match[idx].item(), self.faq)
-			if not_found:
-				return return_s(best_match[0].item(), self.faq)
+			best_match = torch.argsort(sim, descending=True)
+			return return_s(best_match[0].item(), self.faq)
 
 def infobox_to_string(infobox):
 	string = "\n"
@@ -113,23 +105,23 @@ def search(query, faq):
 			return each
 	return None
 
-def esearch(s):
-	dsl['query']['match']['name'] = s
-	results = es.search(body=dsl)['hits']['hits']
-	return [each['_source']['name'] for each in results]
+# def esearch(s):
+# 	dsl['query']['match']['name'] = s
+# 	results = es.search(body=dsl)['hits']['hits']
+# 	return [each['_source']['name'] for each in results]
 
 def return_s(i, faq):
 	s = ""
 	if "abs" in faq[i]:
 		s += "\n"
-		s += "你说的是" + faq[i]['name'] + "吗？"
+		s += "你说的是" + faq[i]['name'] + "吗？\n"
 		s += faq[i]["abs"]
 		if "infobox" in faq[i]:
 			s += infobox_to_string(faq[i]['infobox'])
 		s += "\n"
 	else:
 		s += "\n"
-		s += "你说的是" + faq[i]['name'] + "吗？"
+		s += "你说的是" + faq[i]['name'] + "吗？\n"
 		s += "笨笨也不知道呢。。。。。。要不你自己查一下？？"
 		s += "\n"
 	return s
