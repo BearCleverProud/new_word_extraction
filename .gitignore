@@ -1,6 +1,7 @@
 ccfpedia_term.json
 queries.xlsx
 data/
+chatbot/baidu_cleaned.json
 extract_new_words/all_words.pkl
 extract_new_words/words.txt
 extract_new_words/word_reliable.txt

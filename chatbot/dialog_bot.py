@@ -147,7 +147,7 @@ if __name__ == '__main__':
 	parser.add_argument(
         '--json_file',
         type=str,
-        default='baidu.json',
+        default='baidu_cleaned.json',
         help='crawled from the web')
 	args = parser.parse_args()
 	parser.add_argument(
