@@ -7,11 +7,9 @@ from ltp import LTP
 from elasticsearch import Elasticsearch
 
 es = Elasticsearch()
-stopwords = set()
 ltp = LTP()
-with open(args.stop_words, 'r') as f:
-	for line in f:
-		stopwords.add(line.strip())
+tokenizer = AutoTokenizer.from_pretrained("bert-base-chinese")  
+model = AutoModel.from_pretrained("bert-base-chinese")
 
 dsl = {
     'query': {
@@ -21,17 +19,21 @@ dsl = {
     }
 }
 
-def ChatBot():
+class ChatBot:
 	def __init__(self, json_file, model_file):
-		self.model_file = model_file
-		self.faq = read_json("json_file")
-		self.name_embeddings = torch.load(self.model_file)
+		super(ChatBot, self).__init__()
+		self.faq = read_json(json_file)
+		self.name_embeddings = torch.load(model_file)
+		self.stopwords = set()
+		with open("stopwords/hit_stopwords.txt", 'r') as f:
+			for line in f:
+				self.stopwords.add(line.strip())
 
 	def get_res(self, msg):
 		seg, hidden = ltp.seg([msg])
 		seg = seg[0]
-		tok = "".join(remove_stop(seg, stopwords))
-		r = search(tok, faq)
+		tok = "".join(remove_stop(seg, self.stopwords))
+		r = search(tok, self.faq)
 		s = ""
 
 		if r:
@@ -51,29 +53,14 @@ def ChatBot():
 				torch.tensor(tmp['attention_mask']).unsqueeze(0))[0].squeeze(0).max(dim=0)[0]
 			sim = torch.tensor([cos_sim(each, sent_embed) for each in self.name_embeddings])
 			best_match = torch.argsort(sim, descending=True)[:2]
-			best_match_name = [faq[each]['name'].lower() for each in best_match]
+			best_match_name = [self.faq[each]['name'].lower() for each in best_match]
 			not_found = True
 			for idx, each in enumerate(best_match_name):
 				if each in result:
 					not_found = False
-					return return_s(best_match[idx].item(), faq)
+					return return_s(best_match[idx].item(), self.faq)
 			if not_found:
-				return return_s(best_match[0].item(), faq)
-
-
-
-		inp = input("你好呀我是笨笨，我知道所有关于计算机的词语哦，有什么问题都可以问我哦！～\n")
-		seg, hidden = ltp.seg([inp])
-		seg = seg[0]
-		tok = "".join(remove_stop(seg, stopwords))
-		print("拜拜👋，想我了就来找我哦～")
-
-
-
-
-
-tokenizer = AutoTokenizer.from_pretrained("bert-base-chinese")  
-model = AutoModel.from_pretrained("bert-base-chinese")
+				return return_s(best_match[0].item(), self.faq)
 
 def infobox_to_string(infobox):
 	string = "\n"
@@ -147,20 +134,6 @@ def return_s(i, faq):
 		s += "\n"
 	return s
 
-def print_info(i, faq):
-	if "abs" in faq[i]:
-		print()
-		print("你说的是" + faq[i]['name'] + "吗？")
-		print(faq[i]["abs"])
-		if "infobox" in faq[i]:
-			print(infobox_to_string(faq[i]['infobox']))
-		print()
-	else:
-		print()
-		print("你说的是" + faq[i]['name'] + "吗？")
-		print("笨笨也不知道呢。。。。。。要不你自己查一下？？")
-		print()
-
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser('Chatbot System')
@@ -172,12 +145,12 @@ if __name__ == '__main__':
 	parser.add_argument(
         '--model_file',
         type=str,
-        default=None,
+        default='name_embeddings.pt',
         help='all the preprocessed queries')
 	parser.add_argument(
         '--json_file',
         type=str,
-        default=None,
+        default='baidu.json',
         help='crawled from the web')
 	args = parser.parse_args()
 	parser.add_argument(
@@ -187,48 +160,13 @@ if __name__ == '__main__':
         help='file containing the stop words')
 	args = parser.parse_args()
 
+	bot = ChatBot(args.json_file, args.model_file)
 	inp = input("你好呀我是笨笨，我知道所有关于计算机的词语哦，有什么问题都可以问我哦！～\n").lower()
-	seg, hidden = ltp.seg([inp])
-	seg = seg[0]
-	tok = "".join(remove_stop(seg, stopwords))
-	name_embeddings = torch.load(args.model_file) if args.model_file else calculate_embedding(args.json_file)
-
 	while inp != "exit":
-
-		r = search(tok, faq)
-
-		if r:
-			print()
-			print("你说的是" + r['name'] + "吗？")
-			if 'abs' in r:
-				print(r["abs"])
-			if "infobox" in r:
-				print(infobox_to_string(r['infobox']))
-			print()
-
-		else:
-			result = esearch(tok)
-			tmp = tokenizer(tok)
-			sent_embed = model(torch.tensor(tmp['input_ids']).unsqueeze(0), \
-				torch.tensor(tmp['attention_mask']).unsqueeze(0))[0].squeeze(0).max(dim=0)[0]
-			sim = torch.tensor([cos_sim(each, sent_embed) for each in name_embeddings])
-			best_match = torch.argsort(sim, descending=True)[:2]
-			best_match_name = [faq[each]['name'].lower() for each in best_match]
-			not_found = True
-			for idx, each in enumerate(best_match_name):
-				if each in result:
-					not_found = False
-					print_info(best_match[idx].item(), faq)
-					break
-			if not_found:
-				print_info(best_match[0].item(), faq)
-
-
+		print(bot.get_res(inp))
 		inp = input("你好呀我是笨笨，我知道所有关于计算机的词语哦，有什么问题都可以问我哦！～\n")
-		seg, hidden = ltp.seg([inp])
-		seg = seg[0]
-		tok = "".join(remove_stop(seg, stopwords))
 	print("拜拜👋，想我了就来找我哦～")
+
 
 
 
