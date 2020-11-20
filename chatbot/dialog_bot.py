@@ -39,10 +39,15 @@ class ChatBot:
 		if r:
 			s += "\n"
 			s += "你说的是" + r['name'] + "吗？\n"
+			not_found = True
 			if 'abs' in r:
 				s += r["abs"]
+				not_found = False
 			if "infobox" in r:
 				s += infobox_to_string(r['infobox'])
+				not_found = False
+			if not_found:
+				s += "笨笨也不知道呢。。。。。。要不你自己查一下？？"
 			s += "\n"
 			return s
 
