@@ -25,12 +25,12 @@ def ChatBot():
 	def __init__(self, json_file, model_file):
 		self.model_file = model_file
 		self.faq = read_json("json_file")
+		self.name_embeddings = torch.load(self.model_file)
 
 	def get_res(self, msg):
 		seg, hidden = ltp.seg([msg])
 		seg = seg[0]
 		tok = "".join(remove_stop(seg, stopwords))
-		name_embeddings = torch.load(self.model_file)
 		r = search(tok, faq)
 		s = ""
 
@@ -49,7 +49,7 @@ def ChatBot():
 			tmp = tokenizer(tok)
 			sent_embed = model(torch.tensor(tmp['input_ids']).unsqueeze(0), \
 				torch.tensor(tmp['attention_mask']).unsqueeze(0))[0].squeeze(0).max(dim=0)[0]
-			sim = torch.tensor([cos_sim(each, sent_embed) for each in name_embeddings])
+			sim = torch.tensor([cos_sim(each, sent_embed) for each in self.name_embeddings])
 			best_match = torch.argsort(sim, descending=True)[:2]
 			best_match_name = [faq[each]['name'].lower() for each in best_match]
 			not_found = True
