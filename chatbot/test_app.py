@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 app.logger.setLevel(logging.INFO)
 
-model = ChatBot("baidu.json", "name_embeddings.pt")
+model = ChatBot("baidu_cleaned.json", "name_embeddings.pt")
 
 # TODO: 服务器部署时外部数据加载位置
 #import sys
